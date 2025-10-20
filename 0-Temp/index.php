@@ -13,6 +13,10 @@
         <!-- Panel izquierdo: Explorador -->
         <div class="col-3 border-end p-2">
             <h5>Explorador</h5>
+            <div class="input-group mb-2">
+                <input type="text" id="ruta" class="form-control form-control-sm" placeholder="Ej: C:/imagenes" value="D:\3- Coches & Motos">
+                <button id="btnCargar" class="btn btn-primary btn-sm">Cargar</button>
+            </div>
             <div id="explorador" class="scrollable"></div>
         </div>
 

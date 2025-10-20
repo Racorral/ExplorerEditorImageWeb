@@ -1,4 +1,4 @@
-# 🖼️ Editor de Recorte de Imágenes Web V.1.0
+# 🖼️ Editor de Recorte de Imágenes Web
 
 ![Licencia](https://img.shields.io/badge/license-MIT-green)
 ![Estado](https://img.shields.io/badge/status-Activo-brightgreen)
@@ -44,7 +44,7 @@ cd tu-repo
 
 🚀 Uso
 
-1. Explorador carga todas la unidades del disco
+1. Ingresa la ruta del directorio de imágenes y haz clic en Cargar.
 2. Explora carpetas y archivos de imágenes.
 3. Haz clic en una imagen para mostrarla en el editor.
 4. Ajusta el área de recorte (opcional).

@@ -1,44 +1,36 @@
 $(document).ready(function () {
-  // Cargar unidades automáticamente al iniciar
-  $.post("explorer.php", {}, function (data) {
-    $("#explorador").html(data);
+  $("#btnCargar").on("click", function () {
+    const ruta = $("#ruta").val();
+    if (!ruta) return alert("Ingrese una ruta válida");
+    $.post("explorer.php", { path: ruta }, function (data) {
+      $("#explorador").html(data);
+    });
   });
 
-  // Abrir/cerrar carpeta con carga dinámica (lazy loading)
+  // Alternar carpetas (abrir/cerrar)
   $(document).on("click", ".carpeta > .folder-icon, .carpeta > .nombre-carpeta", function (e) {
     e.stopPropagation();
     const li = $(this).closest("li");
-    const ruta = li.data("ruta");
     const ul = li.children("ul").first();
     const icon = li.find(".folder-icon").first();
 
-    // Si ya está abierta → cerrar
     if (ul.is(":visible")) {
       ul.slideUp(150);
-      if (!li.hasClass("unidad")) icon.text("📁"); // ✅ Mantiene 💽 en unidades
-      return;
-    }
-
-    // Si aún no tiene subelementos → cargar vía AJAX
-    if (ul.length === 0) {
-      $.post("explorer.php", { path: ruta }, function (data) {
-        li.append(data);
-        li.children("ul").slideDown(150);
-        if (!li.hasClass("unidad")) icon.text("📂"); // ✅ Solo cambia icono si no es unidad
-      }).fail(() => {
-        alert("No se pudo acceder a " + ruta);
-      });
+      icon.text("📁"); // cerrado
     } else {
-      // Ya cargado → solo mostrar
       ul.slideDown(150);
-      if (!li.hasClass("unidad")) icon.text("📂"); // ✅ No cambia unidades
+      icon.text("📂"); // abierto
     }
   });
 
-  // Mostrar imagen seleccionada
+  // Mostrar imagen
   $(document).on("click", ".archivo", function (e) {
     e.stopPropagation();
+
+    // 🔹 Quitar la selección anterior
     $(".archivo").removeClass("seleccionado");
+
+    // 🔹 Marcar la imagen clickeada como seleccionada
     $(this).addClass("seleccionado");
 
     const ruta = $(this).data("ruta");
@@ -46,7 +38,6 @@ $(document).ready(function () {
     $("#imagenSeleccionada").attr("src", src).removeClass("d-none");
   });
 });
-
 
 
 // === Lógica de recorte ===
