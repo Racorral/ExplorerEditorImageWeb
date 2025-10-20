@@ -27,6 +27,9 @@ function listarUnidades()
         }
     }
 
+    // 🔹 Ordenar unidades por letra (naturalmente)
+    natcasesort($unidades);
+
     echo "<ul class='list-unstyled'>";
     foreach ($unidades as $unidad) {
         $nombre = isset($nombres[$unidad]) && $nombres[$unidad] !== '' ? " {$nombres[$unidad]}" : '';
@@ -58,12 +61,20 @@ function listarContenido($path)
     foreach ($items as $item) {
         if ($item === '.' || $item === '..') continue;
         $ruta = $path . DIRECTORY_SEPARATOR . $item;
-        if (is_dir($ruta)) $carpetas[] = $item;
-        else $archivos[] = $item;
+        if (is_dir($ruta)) {
+            $carpetas[] = $item;
+        } else {
+            $archivos[] = $item;
+        }
     }
+
+    // 🔹 Ordenar naturalmente como Windows
+    natcasesort($carpetas);
+    natcasesort($archivos);
 
     echo "<ul class='list-unstyled ms-3' style='display:none'>";
 
+    // 🔸 Carpetas primero
     foreach ($carpetas as $carpeta) {
         $rutaCarpeta = $path . DIRECTORY_SEPARATOR . $carpeta;
         echo "<li class='carpeta' data-ruta='$rutaCarpeta'>
@@ -72,6 +83,7 @@ function listarContenido($path)
               </li>";
     }
 
+    // 🔸 Archivos de imagen después
     foreach ($archivos as $archivo) {
         $ext = strtolower(pathinfo($archivo, PATHINFO_EXTENSION));
         if (in_array($ext, $extensiones)) {
@@ -93,3 +105,4 @@ if (!isset($_POST['path']) || empty($_POST['path'])) {
 } else {
     listarContenido($_POST['path']);
 }
+?>
