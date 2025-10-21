@@ -3,6 +3,23 @@ header("Content-Type: text/html; charset=utf-8");
 
 $extensiones = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 
+/**
+ * 🔹 Convierte texto desde CP850 o CP1252 a UTF-8 si es necesario
+ */
+function to_utf8($text)
+{
+    if (!mb_detect_encoding($text, 'UTF-8', true)) {
+        // Convertir desde CP850 (por defecto en consola Windows)
+        $converted = @iconv('CP850', 'UTF-8//TRANSLIT', $text);
+        if ($converted === false) {
+            // Si falla, probar con CP1252 (típico en Windows GUI)
+            $converted = @iconv('CP1252', 'UTF-8//TRANSLIT', $text);
+        }
+        return $converted !== false ? $converted : $text;
+    }
+    return $text;
+}
+
 function listarUnidades()
 {
     $unidades = [];
@@ -23,7 +40,9 @@ function listarUnidades()
 
     foreach ($output as $line) {
         if (preg_match('/([A-Z]:)\s+(.+)/', $line, $matches)) {
-            $nombres[$matches[1] . '\\'] = trim($matches[2]);
+            $unidad = trim($matches[1]) . '\\';
+            $nombre = trim($matches[2]);
+            $nombres[$unidad] = to_utf8($nombre);
         }
     }
 
@@ -35,7 +54,7 @@ function listarUnidades()
         $nombre = isset($nombres[$unidad]) && $nombres[$unidad] !== '' ? " {$nombres[$unidad]}" : '';
         echo "<li class='carpeta unidad' data-ruta='$unidad'>
                 <span class='folder-icon'>💽</span>
-                <span class='nombre-carpeta'>$unidad$nombre</span>
+                <span class='nombre-carpeta'>" . to_utf8($unidad . $nombre) . "</span>
               </li>";
     }
     echo "</ul>";
@@ -79,7 +98,7 @@ function listarContenido($path)
         $rutaCarpeta = $path . DIRECTORY_SEPARATOR . $carpeta;
         echo "<li class='carpeta' data-ruta='$rutaCarpeta'>
                 <span class='folder-icon'>📁</span>
-                <span class='nombre-carpeta'>$carpeta</span>
+                <span class='nombre-carpeta'>" . to_utf8($carpeta) . "</span>
               </li>";
     }
 
@@ -91,7 +110,7 @@ function listarContenido($path)
             $thumbUrl = "get_image.php?path=" . urlencode($rutaArchivo);
             echo "<li class='archivo text-info ms-3 d-flex align-items-center' data-ruta='$rutaArchivo'>
                     <img src='$thumbUrl' alt='' class='thumb me-2'>
-                    <span>$archivo</span>
+                    <span>" . to_utf8($archivo) . "</span>
                   </li>";
         }
     }
